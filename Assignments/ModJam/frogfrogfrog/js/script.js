@@ -52,15 +52,15 @@ const frog = {
     },
     // The frog's tongue has a position, size, speed, and state
     tongue: {
-        x: undefined,
-        y: 480,
+        x: 320,
+        y: 520,
+        targetX: undefined,
+        targetY: undefined,
         size: 20,
         speed: 20,
-        // Determines how the tongue moves each frame
         state: "idle" // State can be: idle, outbound, inbound
     }
-};
-
+}
 
 /**
  * Creates the canvas and initializes the fly
@@ -79,34 +79,48 @@ function draw() {
     moveFrog();
     moveTongue();
     drawFrog();
-    checkTongueFlyOverlap();
+    //continuously check for overlaps while the game is running
+    checkTongueFlyOverlap()
 }
-
-
 
 /**
  * Handles moving the tongue based on its state
  */
 function moveTongue() {
-    // Tongue matches the frog's x
-    frog.tongue.x = frog.body.x;
-    // If the tongue is idle, it doesn't do anything
     if (frog.tongue.state === "idle") {
-        // Do nothing
+        // Keep the tongue at the frog's position when idle
+        frog.tongue.x = frog.body.x;
+        frog.tongue.y = frog.body.y;
     }
-    // If the tongue is outbound, it moves up
     else if (frog.tongue.state === "outbound") {
-        frog.tongue.y += -frog.tongue.speed;
-        // The tongue bounces back if it hits the top
-        if (frog.tongue.y <= 0) {
+        // Move the tongue towards the target position
+        let dx = frog.tongue.targetX - frog.tongue.x;
+        let dy = frog.tongue.targetY - frog.tongue.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > frog.tongue.speed) {
+            frog.tongue.x += (dx / distance) * frog.tongue.speed;
+            frog.tongue.y += (dy / distance) * frog.tongue.speed;
+        } else {
+            // If we're close enough to the target, start moving back
+            frog.tongue.x = frog.tongue.targetX;
+            frog.tongue.y = frog.tongue.targetY;
             frog.tongue.state = "inbound";
         }
     }
-    // If the tongue is inbound, it moves down
     else if (frog.tongue.state === "inbound") {
-        frog.tongue.y += frog.tongue.speed;
-        // The tongue stops if it hits the bottom
-        if (frog.tongue.y >= height) {
+        // Move the tongue back to the frog
+        let dx = frog.body.x - frog.tongue.x;
+        let dy = frog.body.y - frog.tongue.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > frog.tongue.speed) {
+            frog.tongue.x += (dx / distance) * frog.tongue.speed;
+            frog.tongue.y += (dy / distance) * frog.tongue.speed;
+        } else {
+            // If we're back at the frog, become idle
+            frog.tongue.x = frog.body.x;
+            frog.tongue.y = frog.body.y;
             frog.tongue.state = "idle";
         }
     }
@@ -130,27 +144,32 @@ function drawFrog() {
     line(frog.tongue.x, frog.tongue.y, frog.body.x, frog.body.y);
     pop();
 
-    // // Draw the frog's body
-    // push();
-    // fill("#00ff00");
-    // noStroke();
-    // ellipse(frog.body.x, frog.body.y, frog.body.size);
-    // pop();
+    // Draw the frog's body
+    push();
+    fill("#00ff00");
+    noStroke();
+    ellipse(frog.body.x, frog.body.y, frog.body.size);
+    pop();
 }
 
 /**
  * Handles the tongue overlapping the fly
  */
 function checkTongueFlyOverlap() {
-    // Get distance from tongue to fly
+    // Get distance from tongue tip to fly
     const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
+
     // Check if it's an overlap
     const eaten = (d < frog.tongue.size/2 + fly.size/2);
+
     if (eaten) {
         // Reset the fly
-        moveFly();
+        resetFly();
+        
         // Bring back the tongue
         frog.tongue.state = "inbound";
+        
+    
     }
 }
 /**
@@ -159,6 +178,8 @@ function checkTongueFlyOverlap() {
 function mousePressed() {
     if (frog.tongue.state === "idle") {
         frog.tongue.state = "outbound";
+        frog.tongue.targetX = mouseX;
+        frog.tongue.targetY = mouseY;
     }
 }
 
