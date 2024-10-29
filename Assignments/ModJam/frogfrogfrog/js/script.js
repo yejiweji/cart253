@@ -1,4 +1,3 @@
-console.log("p5.js version:", p5.version);
 "use strict"; // Enables strict mode for better error catching and performance
 
 //Variables
@@ -6,10 +5,11 @@ let fly; // Object to represent the fly
 let score = 0; // Player's score
 let frog; // Object to represent the frog
 let lastFlyMoveTime = 0; // Timestamp of the last fly movement
-let flyMoveInterval = 1000; // Move fly every 1000 milliseconds (1 second)
+let flyMoveInterval = 50; // Move fly every 1000 milliseconds (1 second)
+let flyPauseTime = 0;
+let flyPauseDuration = 180; // Pause for 180 ms
 
 function setup() {
-    console.log("setup function is running");
     let canvas = createCanvas(640, 480); // Create a canvas of 640x480 pixels
     canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
 
@@ -26,15 +26,16 @@ function setup() {
       targetX: undefined,
       targetY: undefined,
       size: 10,
-      speed: 5,
+      speed: 9, // speed of tongue movement (higher # = faster)
       state: "idle" // State can be: idle, outbound, inbound
     }
   };
     resetFly(); // Initialize the fly's position
+    lastFlyMoveTime = millis(); // Initialize the last move time
+
 }
 
 function draw() {
-  console.log("draw function is running");  
   background("#87ceeb"); // Set sky-blue background
   moveFly(); // Update the fly's position randomly
   drawFly(); // Draw the fly on the canvas
@@ -43,34 +44,6 @@ function draw() {
   checkTongueFlyOverlap(); // Check if the tongue has caught the fly
   drawScore(); // Display the current score
 }
-
- //Resets the fly's position randomly within bounds
-function resetFly() {
-  fly = {
-    x: random(width), // Random x position within canvas width
-    y: random(height - 100), // Random y position -- keep fly away from the bottom where the frog is
-    size: 20, //Size of fly
-    speed: 2 // Speed of fly movement (moveFly function)
-  };
-}
-
-// Moves the fly randomly within bounds at specified intervals
-function moveFly() {
-  // Move the fly randomly every flyMoveInterval milliseconds
-  if (millis() - lastFlyMoveTime > flyMoveInterval) {
-      fly.x += random(-fly.speed, fly.speed); // Randomly adjust x position by speed amount
-      fly.y += random(-fly.speed, fly.speed); // Randomly adjust y position by speed amount
-      
-  // Keep the fly within the canvas bounds using constrain function
-      fly.x = constrain(fly.x, 0, width); 
-      fly.y = constrain(fly.y, 0, height - 100); 
-        
-      lastFlyMoveTime = millis(); // Update last move time to current time
-    }
-}
-
-
-
 
  //Draws the fly on the canvas
 function drawFly() {
@@ -107,7 +80,51 @@ function drawFrog() {
   pop();
 }
 
+function moveFly() {
+  let currentTime = millis();
+  if (currentTime - lastFlyMoveTime > flyMoveInterval) {
+    lastFlyMoveTime = currentTime;
 
+    console.log("Fly state:", fly.state);
+    console.log("Fly position:", fly.x, fly.y);
+    console.log("Fly target:", fly.targetX, fly.targetY);
+
+    if (fly.state === "moving") {
+      // Calculate direction to target
+      let dx = fly.targetX - fly.x;
+      let dy = fly.targetY - fly.y;
+      let distance = dist(fly.x, fly.y, fly.targetX, fly.targetY);
+
+      if (distance > fly.speed) {
+        // Move towards the target
+        fly.x += (dx / distance) * fly.speed;
+        fly.y += (dy / distance) * fly.speed;
+      } else {
+        // Reached the target, decide whether to pause or set a new target
+        if (random() < 0.3) { // 30% chance to pause
+          fly.state = "paused";
+          flyPauseTime = currentTime;
+        } else {
+          // Set a new random target
+          fly.targetX = random(width);
+          fly.targetY = random(height - 100);
+        }
+      }
+    } else if (fly.state === "paused") {
+      // Check if pause duration has elapsed
+      if (currentTime - flyPauseTime > flyPauseDuration) {
+        fly.state = "moving";
+        fly.targetX = random(width);
+        fly.targetY = random(height - 100);
+      }
+      
+    }
+    // Ensure the fly stays within the canvas boundaries
+    fly.x = constrain(fly.x, 0, width);
+    fly.y = constrain(fly.y, 0, height - 100);
+
+  }
+}
 //Handles the movement of the frog's tongue
 function moveTongue() {
     if (frog.tongue.state === "idle") {
@@ -176,4 +193,18 @@ function mousePressed() {
       frog.tongue.targetX = mouseX;   // Set target X position to mouse X coordinate 
       frog.tongue.targetY = mouseY;   // Set target Y position to mouse Y coordinate 
   }
+}
+
+//Resets the fly's position randomly within bounds
+function resetFly() {
+  fly = {
+    x: random(width), // Random x position within canvas width
+    y: random(height - 100), // Random y position -- keep fly away from the bottom where the frog is
+    size: 20, //Size of fly
+    speed: random(1, 7.5), // Speed of fly movement (moveFly function)
+    targetX: random(width),
+    targetY: random(height - 100),
+    state: "moving" // Can be "moving" or "paused"
+  };
+  lastFlyMoveTime = millis(); // Reset the last move time
 }
