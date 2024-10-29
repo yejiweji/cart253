@@ -2,23 +2,21 @@ console.log("p5.js version:", p5.version);
 "use strict"; // Enables strict mode for better error catching and performance
 
 //Variables
-let fly; // Object to represent the fly
-let score = 0; // Player's score
-let frog; // Object to represent the frog
-let lastFlyMoveTime = 0; // Timestamp of the last fly movement
-let flyMoveInterval = 1000; // Move fly every 1000 milliseconds (1 second)
+let fly;
+let score = 0;
+let frog;
 
 function setup() {
     console.log("setup function is running");
     let canvas = createCanvas(640, 480); // Create a canvas of 640x480 pixels
-    canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
+    canvas.parent ('canvas-container');
 
   // Initialize the frog object with its properties
   frog = {
     body: {
       x: width / 2,      // Center horizontally
       y: height - 50,    // Near the bottom of the canvas
-      size: 60          // Size of the frog's body
+      size: 60
     },
     tongue: {
       x: width / 2,
@@ -36,47 +34,27 @@ function setup() {
 function draw() {
   console.log("draw function is running");  
   background("#87ceeb"); // Set sky-blue background
-  moveFly(); // Update the fly's position randomly
-  drawFly(); // Draw the fly on the canvas
-  moveTongue(); // Handle tongue movement
-  drawFrog(); // Draw the frog on the canvas
-  checkTongueFlyOverlap(); // Check if the tongue has caught the fly
-  drawScore(); // Display the current score
+  drawFly();
+  moveTongue();
+  drawFrog();
+  checkTongueFlyOverlap(); //continuously check for overlaps while the game is running
+  drawScore();
 }
 
- //Resets the fly's position randomly within bounds
+ //Resets the fly's position randomly
 function resetFly() {
   fly = {
-    x: random(width), // Random x position within canvas width
-    y: random(height - 100), // Random y position -- keep fly away from the bottom where the frog is
-    size: 20, //Size of fly
-    speed: 2 // Speed of fly movement (moveFly function)
+    x: random(width),
+    y: random(height - 100), // Keep fly away from the bottom where the frog is
+    size: 20
   };
 }
-
-// Moves the fly randomly within bounds at specified intervals
-function moveFly() {
-  // Move the fly randomly every flyMoveInterval milliseconds
-  if (millis() - lastFlyMoveTime > flyMoveInterval) {
-      fly.x += random(-fly.speed, fly.speed); // Randomly adjust x position by speed amount
-      fly.y += random(-fly.speed, fly.speed); // Randomly adjust y position by speed amount
-      
-  // Keep the fly within the canvas bounds using constrain function
-      fly.x = constrain(fly.x, 0, width); 
-      fly.y = constrain(fly.y, 0, height - 100); 
-        
-      lastFlyMoveTime = millis(); // Update last move time to current time
-    }
-}
-
-
-
 
  //Draws the fly on the canvas
 function drawFly() {
   push(); // Save current drawing style
   fill(0); // Black color
-  ellipse(fly.x, fly.y, fly.size); //Draw a circle 
+  ellipse(fly.x, fly.y, fly.size);
   pop(); // Restore previous drawing style
 }
 
@@ -169,11 +147,11 @@ function drawScore() {
     pop();
   }
 
- // Mouse pressed function - runs when mouse is clicked to shoot tongue towards mouse position
+ //mousePressed function - runs when mouse is clicked
 function mousePressed() {
-  if (frog.tongue.state === "idle") { // Only shoot if tongue is idle
-      frog.tongue.state = "outbound"; // Change state to outbound to indicate movement towards target
-      frog.tongue.targetX = mouseX;   // Set target X position to mouse X coordinate 
-      frog.tongue.targetY = mouseY;   // Set target Y position to mouse Y coordinate 
+  if (frog.tongue.state === "idle") {
+    frog.tongue.state = "outbound";
+    frog.tongue.targetX = mouseX;
+    frog.tongue.targetY = mouseY;
   }
 }
