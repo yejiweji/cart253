@@ -9,6 +9,17 @@ let flyMoveInterval = 50; // Move fly every 1000 milliseconds (1 second)
 let flyPauseTime = 0;
 let flyPauseDuration = 180; // Pause for 180 ms
 
+function draw() {
+  background("#29201d"); // Set background
+  drawFrog(); // Draw the frog on the canvas
+  drawFly(); // Draw the fly on the canvas
+  moveFly(); // Update the fly's position randomly
+  moveTongue(); // Handle tongue movement
+  checkTongueFlyOverlap(); // Check if the tongue has caught the fly
+  drawScore(); // Display the current score
+  
+}
+
 function setup() {
     let canvas = createCanvas(640, 480); // Create a canvas of 640x480 pixels
     canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
@@ -17,15 +28,15 @@ function setup() {
   frog = {
     body: {
       x: width / 2,      // Center horizontally
-      y: height - 50,    // Near the bottom of the canvas
-      size: 60          // Size of the frog's body
+      y: height / 2,    // Center vertically
+      size: 400          // Size of the frog's body
     },
     tongue: {
       x: width / 2,
       y: height - 50,
       targetX: undefined,
       targetY: undefined,
-      size: 10,
+      size: 30,
       speed: 9, // speed of tongue movement (higher # = faster)
       state: "idle" // State can be: idle, outbound, inbound
     }
@@ -35,37 +46,9 @@ function setup() {
 
 }
 
-function draw() {
-  background("#87ceeb"); // Set sky-blue background
-  moveFly(); // Update the fly's position randomly
-  drawFly(); // Draw the fly on the canvas
-  moveTongue(); // Handle tongue movement
-  drawFrog(); // Draw the frog on the canvas
-  checkTongueFlyOverlap(); // Check if the tongue has caught the fly
-  drawScore(); // Display the current score
-}
-
- //Draws the fly on the canvas
-function drawFly() {
-  push(); // Save current drawing style
-  fill(0); // Black color
-  ellipse(fly.x, fly.y, fly.size); //Draw a circle 
-  pop(); // Restore previous drawing style
-}
-
 //Draws the frog and its tongue
 function drawFrog() {
-  push();
-  // Draw tongue
-  stroke("#ff0000");
-  strokeWeight(frog.tongue.size);
-  line(frog.body.x, frog.body.y, frog.tongue.x, frog.tongue.y);
-  
-  // Draw tongue tip
-  fill("#ff0000");
-  noStroke();
-  ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size);
-  
+  push();  
   // Draw frog body
   fill("#00ff00");
   ellipse(frog.body.x, frog.body.y, frog.body.size);
@@ -78,8 +61,23 @@ function drawFrog() {
   ellipse(frog.body.x - 15, frog.body.y - 10, 10);
   ellipse(frog.body.x + 15, frog.body.y - 10, 10);
   pop();
+  
+   // Draw tongue
+  stroke("#ff0000");
+  strokeWeight(frog.tongue.size);
+  line(frog.body.x, frog.body.y, frog.tongue.x, frog.tongue.y);
+  
+  // Draw tongue tip
+  fill("#ff0000");
+  noStroke();
+  ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size);
 }
 
+//Draws the fly on the canvas
+function drawFly() {
+  fill(0); // Black color
+  ellipse(fly.x, fly.y, fly.size/2); //Draw a circle 
+}
 function moveFly() {
   let currentTime = millis();
   if (currentTime - lastFlyMoveTime > flyMoveInterval) {
@@ -125,6 +123,7 @@ function moveFly() {
 
   }
 }
+
 //Handles the movement of the frog's tongue
 function moveTongue() {
     if (frog.tongue.state === "idle") {
