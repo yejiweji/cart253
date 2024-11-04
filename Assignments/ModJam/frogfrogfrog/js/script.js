@@ -15,8 +15,18 @@ function preload() {
   backgroundImg = loadImage('assets/images/froglips.jpg');
 }
 
+function calculateEyePosition(eyeX, eyeY, targetX, targetY, maxDistance) {
+  let angle = atan2(targetY - eyeY, targetX - eyeX);
+  let distance = min(dist(eyeX, eyeY, targetX, targetY), maxDistance);
+  return {
+    x: eyeX + cos(angle) * distance,
+    y: eyeY + sin(angle) * distance
+  };
+}
+
 function draw() {
   image(backgroundImg, 0, 0); // Draw the background image
+  updateEyeColor(); // Update eye color
   drawFrog(); // Draw the frog on the canvas
   drawFly(); // Draw the fly on the canvas
   moveFly(); // Update the fly's position randomly
@@ -30,7 +40,8 @@ function setup() {
     canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
     // Resize the background image to fit the canvas
     backgroundImg.resize(width, height);
-    // Initialize the frog object with its properties
+   
+// Initialize the frog object with its properties
   frog = {
     body: {
       x: width / 2,      // Center horizontally
@@ -40,12 +51,17 @@ function setup() {
     tongue: {
       x: width / 2,
       y: height - 50,
-      startY: height - 156, //tongue starting y position
+      startY: height - 158, //tongue starting y position
       targetX: undefined,
       targetY: undefined,
-      size: 30,
-      speed: 9, // speed of tongue movement (higher # = faster)
+      size: 20,
+      speed: 8.6, // speed of tongue movement (higher # = faster)
       state: "idle" // State can be: idle, outbound, inbound
+    },
+    eyes: {
+      color: "#e0ba01", // Default yellow color
+      redDuration: 60, // Number of frames the eyes stay red
+      redTimer: 0 // Timer to track how long eyes have been red
     }
   };
     resetFly(); // Initialize the fly's position
@@ -55,34 +71,43 @@ function setup() {
 
 //Draws the frog and its tongue
 function drawFrog() {
-  push();  
-  // // Draw frog body placeholder
-  // fill("#00ff00");
-  // ellipse(frog.body.x, frog.body.y, frog.body.size);
-  
-  // Draw eyes
-  fill("#dbba04"); // Yellow
-  ellipse(frog.body.x - 78, frog.body.y - 110, 80);
-  ellipse(frog.body.x + 84, frog.body.y - 110, 80);
-  fill(0); // Black
-  ellipse(frog.body.x - 78, frog.body.y - 110, 20);
-  ellipse(frog.body.x + 84, frog.body.y - 110, 20);
-  pop();
-  
-   // Draw tongue
-  stroke("#ff0000");
+  push();   
+   // Draw eyes
+   fill(frog.eyes.color); // Use the current eye colour
+   let leftEyeX = frog.body.x - 70;
+   let rightEyeX = frog.body.x + 84;
+   let eyeY = frog.body.y - 110;
+   let eyeSize = 60;
+   let pupilSize = 18;
+   
+   ellipse(leftEyeX, eyeY, eyeSize);
+   ellipse(rightEyeX, eyeY, eyeSize);
+   
+   // Calculate pupil positions
+   let maxPupilDistance = (eyeSize - pupilSize) / 4;
+   let leftPupil = calculateEyePosition(leftEyeX, eyeY, mouseX, mouseY, maxPupilDistance);
+   let rightPupil = calculateEyePosition(rightEyeX, eyeY, mouseX, mouseY, maxPupilDistance);
+   
+   // Draw pupils
+   fill("#281f18"); // Blackish brown
+   ellipse(leftPupil.x, leftPupil.y, pupilSize);
+   ellipse(rightPupil.x, rightPupil.y, pupilSize);
+   pop();
+
+  // Draw tongue
+  stroke("#f64a02");
   strokeWeight(frog.tongue.size * 0.5);
   line(frog.body.x, frog.tongue.startY, frog.tongue.x, frog.tongue.y);
   
   // Draw tongue tip
-  fill("#ff0000");
+  fill("#f64a02");
   noStroke();
-  ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size * 0.68);
+  ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size * 0.5);
 }
 
 //Draws the fly on the canvas
 function drawFly() {
-  fill(0); // Black color
+  fill("#487b64"); // fly green
   ellipse(fly.x, fly.y, fly.size/2); //Draw a circle 
 }
 function moveFly() {
@@ -172,15 +197,26 @@ function moveTongue() {
     }
   }
 
-/**
- * Checks if the tongue has caught the fly
- */
+ //Checks if the tongue has caught the fly
 function checkTongueFlyOverlap() {
   let d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
   if (d < frog.tongue.size/2 + fly.size/2 && frog.tongue.state === "outbound") {
     resetFly();
     frog.tongue.state = "inbound";
     score++;
+
+    // Turn eyes red
+    frog.eyes.color = "#FF0000";
+    frog.eyes.redTimer = frog.eyes.redDuration;
+  }
+}
+
+function updateEyeColor() {
+  if (frog.eyes.redTimer > 0) {
+    frog.eyes.redTimer--;
+    if (frog.eyes.redTimer === 0) {
+      frog.eyes.color = "#e0ba01"; // Return to default yellow color
+    }
   }
 }
 
