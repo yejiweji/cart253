@@ -9,6 +9,8 @@ let flyMoveInterval = 50; // Move fly every 1000 milliseconds (1 second)
 let flyPauseTime = 0;
 let flyPauseDuration = 180; // Pause for 180 ms
 let backgroundImg;
+let gameState = "title"; // Can be "title", "playing", or "ending"
+let maxScore = 10; // Set the maximum score to end the game
 
 function preload() {
   // Load the background image
@@ -16,8 +18,11 @@ function preload() {
 }
 
 function calculateEyePosition(eyeX, eyeY, targetX, targetY, maxDistance) {
+  // Calculate the angle between the eye and the target
   let angle = atan2(targetY - eyeY, targetX - eyeX);
+  // Calculate the distance between the eye and the target, but limit it to the maximum allowed distance
   let distance = min(dist(eyeX, eyeY, targetX, targetY), maxDistance);
+  // Return the new position of the pupil
   return {
     x: eyeX + cos(angle) * distance,
     y: eyeY + sin(angle) * distance
@@ -33,6 +38,24 @@ function draw() {
   moveTongue(); // Handle tongue movement
   checkTongueFlyOverlap(); // Check if the tongue has caught the fly
   drawScore(); // Display the current score
+  //title and closing scene logic
+  if (gameState === "title") {
+    drawTitleScreen();
+  } else if (gameState === "playing") {
+    updateEyeColor();
+    drawFrog();
+    drawFly();
+    moveFly();
+    moveTongue();
+    checkTongueFlyOverlap();
+    drawScore();
+    
+    if (score >= maxScore) {
+      gameState = "ending";
+    }
+  } else if (gameState === "ending") {
+    drawEndingScreen();
+  }
 }
 
 function setup() {
@@ -40,6 +63,7 @@ function setup() {
     canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
     // Resize the background image to fit the canvas
     backgroundImg.resize(width, height);
+    textFont('Courier');
    
 // Initialize the frog object with its properties
   frog = {
@@ -83,7 +107,7 @@ function drawFrog() {
    ellipse(leftEyeX, eyeY, eyeSize);
    ellipse(rightEyeX, eyeY, eyeSize);
    
-   // Calculate pupil positions
+   // Calculate pupil positions + target (mouse position)
    let maxPupilDistance = (eyeSize - pupilSize) / 4;
    let leftPupil = calculateEyePosition(leftEyeX, eyeY, mouseX, mouseY, maxPupilDistance);
    let rightPupil = calculateEyePosition(rightEyeX, eyeY, mouseX, mouseY, maxPupilDistance);
@@ -147,12 +171,10 @@ function moveFly() {
         fly.targetX = random(width);
         fly.targetY = random(height - 100);
       }
-      
     }
     // Ensure the fly stays within the canvas boundaries
     fly.x = constrain(fly.x, 0, width);
     fly.y = constrain(fly.y, 0, height - 100);
-
   }
 }
 
@@ -220,20 +242,20 @@ function updateEyeColor() {
   }
 }
 
-function drawScore() {
-    push();
-    fill(0);
-    textSize(24);
-    text(`Score: ${score}`, 10, 30);
-    pop();
-  }
-
  // Mouse pressed function - runs when mouse is clicked to shoot tongue towards mouse position
-function mousePressed() {
-  if (frog.tongue.state === "idle") { // Only shoot if tongue is idle
-      frog.tongue.state = "outbound"; // Change state to outbound to indicate movement towards target
-      frog.tongue.targetX = mouseX;   // Set target X position to mouse X coordinate 
-      frog.tongue.targetY = mouseY;   // Set target Y position to mouse Y coordinate 
+ function mousePressed() {
+  if (gameState === "title") {
+    gameState = "playing";
+    resetGame();
+  } else if (gameState === "playing") {
+    if (frog.tongue.state === "idle") {
+      frog.tongue.state = "outbound";
+      frog.tongue.targetX = mouseX;
+      frog.tongue.targetY = mouseY;
+    }
+  } else if (gameState === "ending") {
+    gameState = "playing";
+    resetGame();
   }
 }
 
@@ -248,5 +270,42 @@ function resetFly() {
     targetY: random(height - 100),
     state: "moving" // Can be "moving" or "paused"
   };
-  lastFlyMoveTime = millis(); // Reset the last move time
+    lastFlyMoveTime = millis(); // Reset the last move time
+}
+
+// Score text + colour etc
+function drawScore() {
+  push();
+  fill("#487b64");
+  textSize(24);
+  text(`Score: ${score}`, 10, 30);
+  pop();
+}
+
+// Title screen + Instructions setup
+function drawTitleScreen() {
+  push();
+  textAlign(CENTER, CENTER);
+  fill(255);
+  textSize(40);
+  text("Gluttony The Frog", width/2, height/3);
+  textSize(20);
+  text("Click to shoot the frog's tongue and catch flies!", width/2, height/2);
+  text("Try to catch " + maxScore + " flies!", width/2, height/2 + 40);
+  textSize(10);
+  text("Click to start", width/2, height*3/4);
+  pop();
+}
+// Ending screen text
+function drawEndingScreen() {
+  push();
+  textAlign(CENTER, CENTER);
+  fill(255);
+  textSize(40);
+  text("Game Over!", width/2, height/3);
+  textSize(20);
+  text("You caught " + score + " flies!", width/2, height/2);
+  textSize(10);
+  text("Click to play again", width/2, height*3/4);
+  pop();
 }
