@@ -57,10 +57,9 @@ frog = {
     redTimer: 0 // Timer to track how long eyes have been red
   }
 }
-}
   resetFly(); // Initialize the fly's position
   lastFlyMoveTime = millis(); // Initialize the last move time
-
+}
 function draw() {
   image(backgroundImg, 0, 0); // Draw the background image
   updateEyeColor(); // Update eye color
