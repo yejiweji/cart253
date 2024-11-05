@@ -12,7 +12,6 @@ let backgroundImg;
 let gameState = "title"; // Can be "title", "playing", or "ending"
 let maxScore = 10; // Set the maximum score to end the game
 
-
 function preload() {
   // Load the background image
   backgroundImg = loadImage('assets/images/froglips.jpg');
@@ -29,6 +28,38 @@ function calculateEyePosition(eyeX, eyeY, targetX, targetY, maxDistance) {
     y: eyeY + sin(angle) * distance
   };
 }
+function setup() {
+  let canvas = createCanvas(640, 480); // Create a canvas of 640x480 pixels
+  canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
+  // Resize the background image to fit the canvas
+  backgroundImg.resize(width, height);
+  textFont('Courier');
+// Initialize the frog object with its properties
+frog = {
+  body: {
+    x: width / 2,      // Center horizontally
+    y: height / 2,    // Center vertically
+    size: 400          // Size of the frog's body
+  },
+  tongue: {
+    x: width / 2,
+    y: height - 50,
+    startY: height - 158, //tongue starting y position
+    targetX: undefined,
+    targetY: undefined,
+    size: 20,
+    speed: 8.6, // speed of tongue movement (higher # = faster)
+    state: "idle" // State can be: idle, outbound, inbound
+  },
+  eyes: {
+    color: "#e0ba01", // Default yellow color
+    redDuration: 60, // Number of frames the eyes stay red
+    redTimer: 0 // Timer to track how long eyes have been red
+  }
+}
+}
+  resetFly(); // Initialize the fly's position
+  lastFlyMoveTime = millis(); // Initialize the last move time
 
 function draw() {
   image(backgroundImg, 0, 0); // Draw the background image
@@ -57,41 +88,6 @@ function draw() {
   } else if (gameState === "ending") {
     drawEndingScreen();
   }
-}
-
-function setup() {
-    let canvas = createCanvas(640, 480); // Create a canvas of 640x480 pixels
-    canvas.parent ('canvas-container'); // Attach the canvas to the HTML element with id 'canvas-container'
-    // Resize the background image to fit the canvas
-    backgroundImg.resize(width, height);
-
-    textFont('Courier');
-// Initialize the frog object with its properties
-  frog = {
-    body: {
-      x: width / 2,      // Center horizontally
-      y: height / 2,    // Center vertically
-      size: 400          // Size of the frog's body
-    },
-    tongue: {
-      x: width / 2,
-      y: height - 50,
-      startY: height - 158, //tongue starting y position
-      targetX: undefined,
-      targetY: undefined,
-      size: 20,
-      speed: 8.6, // speed of tongue movement (higher # = faster)
-      state: "idle" // State can be: idle, outbound, inbound
-    },
-    eyes: {
-      color: "#e0ba01", // Default yellow color
-      redDuration: 60, // Number of frames the eyes stay red
-      redTimer: 0 // Timer to track how long eyes have been red
-    }
-  };
-    resetFly(); // Initialize the fly's position
-    lastFlyMoveTime = millis(); // Initialize the last move time
-
 }
 
 //Draws the frog and its tongue
@@ -135,6 +131,7 @@ function drawFly() {
   fill("#487b64"); // fly green
   ellipse(fly.x, fly.y, fly.size/2); //Draw a circle 
 }
+
 function moveFly() {
   let currentTime = millis();
   if (currentTime - lastFlyMoveTime > flyMoveInterval) {
@@ -257,6 +254,7 @@ function updateEyeColor() {
   } else if (gameState === "ending") {
     gameState = "playing";
     resetGame();
+
   }
 }
 
@@ -297,6 +295,8 @@ function drawTitleScreen() {
   text("Click to start", width/2, height*3/4);
   pop();
 }
+
+
 // Ending screen text
 function drawEndingScreen() {
   push();
