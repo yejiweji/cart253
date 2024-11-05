@@ -2,7 +2,7 @@
 
 Yejin Oh 40229957
 
-View this project online: https://yejiweji.github.io/cart253/ 
+View this project online: https://yejiweji.github.io/cart253/Assignments/ModJam/frogfrogfrog/
 
 Description
 Simple clicking game; playing as a gluttonous frog click to direct his tongue to eat away at the flies flying around. Catch 10 to win!
