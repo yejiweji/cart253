@@ -289,9 +289,9 @@ function drawTitleScreen() {
   fill(255);
   textSize(40);
   text("Gluttony The Frog", width/2, height/3);
-  textSize(20);
-  text("Click to shoot the frog's tongue and catch flies!", width/2, height/2);
-  text("Try to catch " + maxScore + " flies!", width/2, height/2 + 40);
+  textSize(15);
+  text("RibBitT! Click to direct my tongue and help me catch flies!", width/2, height/2);
+  text("Catch " + maxScore + " flies to win!", width/2, height/2 + 40);
   textSize(10);
   text("Click to start", width/2, height*3/4);
   pop();
@@ -301,10 +301,10 @@ function drawEndingScreen() {
   push();
   textAlign(CENTER, CENTER);
   fill(255);
-  textSize(40);
+  textSize(30);
   text("Game Over!", width/2, height/3);
   textSize(20);
-  text("You caught " + score + " flies!", width/2, height/2);
+  text("YUMMY RIBBITT! You caught " + score + " flies!", width/2, height/2);
   textSize(10);
   text("Click to play again", width/2, height*3/4);
   pop();
