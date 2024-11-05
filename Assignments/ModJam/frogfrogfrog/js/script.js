@@ -11,16 +11,11 @@ let flyPauseDuration = 180; // Pause for 180 ms
 let backgroundImg;
 let gameState = "title"; // Can be "title", "playing", or "ending"
 let maxScore = 10; // Set the maximum score to end the game
-let crunchSound; // Sound effect for eating
-let backgroundMusic; // Background music
 
 
 function preload() {
   // Load the background image
   backgroundImg = loadImage('assets/images/froglips.jpg');
-  // Load sound effects
-  crunchSound = loadSound('assets/sounds/crunch.mp3');
-  backgroundMusic = loadSound('assets/sounds/flies.mp3');
 }
 
 function calculateEyePosition(eyeX, eyeY, targetX, targetY, maxDistance) {
@@ -70,9 +65,6 @@ function setup() {
     // Resize the background image to fit the canvas
     backgroundImg.resize(width, height);
 
-    // Start playing background music
-    backgroundMusic.loop();
-    
     textFont('Courier');
 // Initialize the frog object with its properties
   frog = {
@@ -317,6 +309,4 @@ function drawEndingScreen() {
   textSize(10);
   text("Click to play again", width/2, height*3/4);
   pop();
-     // Play crunch sound
-     crunchSound.play();
 }
