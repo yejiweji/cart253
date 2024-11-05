@@ -5,7 +5,7 @@ Yejin Oh 40229957
 View this project online: https://yejiweji.github.io/cart253/Assignments/ModJam/frogfrogfrog/
 
 Description:
-Simple clicking game playing as a gluttonous frog click to direct his tongue to eat away at the flies flying around. Catch 10 to win!
+Simple clicking game playing as a gluttonous frog who knows he shouldn't but can't help eat all the flies, he goes a little crazy every time he does; click to direct his tongue to eat the flies flying around. Catch 10 to win!
 
 Credits:
 This project uses p5.js.
