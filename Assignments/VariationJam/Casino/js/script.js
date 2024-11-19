@@ -1,12 +1,12 @@
 /**
- * Title of Project
- * Author Name
+ * Casino
+ * Yejin Oh 40229957
  * 
  * DESCRIPTION OF MY PROJECT!
  * 
  */
 
-"use strict";
+"use strict";  // Enables strict mode for better error catching and performance
 
 /**
  * OH LOOK I DIDN'T DESCRIBE SETUP!!
