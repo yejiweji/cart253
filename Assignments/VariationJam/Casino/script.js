@@ -1,3 +1,5 @@
+"strict"
+
 let reels = [];
 let symbols = ['🐟', '🐟', '🐟', '🐟', '🐟', '🍇'];
 let spinning = false;
@@ -26,7 +28,7 @@ function setup() {
 }
 
 function draw() {
-    background(178, 224, 178);
+    background(178, 224, 178); 
 
     fill(46, 139, 87);
     noStroke();

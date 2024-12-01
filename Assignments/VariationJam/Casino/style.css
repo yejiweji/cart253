@@ -10,8 +10,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #b2e0b2; /* Light green for grass */
-  font-family: Arial, sans-serif;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
+
+    background: repeating-linear-gradient(
+        180deg,
+        #288628aa,   /* Dark green */
+        #489e48a0 40px,
+        #9bc99b 10px,  /* Light green */
+        #a6e3a6 70px   /* Width of each stripe */
+    );
+    margin: 0;
+    padding: 0;
+    height: 100vh;  /* Full height of the viewport */
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
+
 }
 
 #game-container {
@@ -23,7 +35,7 @@ body {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 18px;
-  background-color: #e74c3c;
+  background-color: #409106;
   color: white;
   border: none;
   border-radius: 5px;
@@ -32,13 +44,13 @@ body {
 
 @keyframes flashRed {
   0% {
-      background-color: rgba(0, 100, 255, 0.5); /* Default water color */
+      background-color: rgba(0, 167, 239, 0.652); /* Default water color */
   }
   50% {
-      background-color: rgba(255, 0, 0, 0.5); /* Red flash */
+      background-color: rgba(202, 0, 0, 0.58); /* Red flash */
   }
   100% {
-      background-color: rgba(0, 100, 255, 0.5); /* Back to original color */
+      background-color: rgba(0, 167, 239, 0.652); /* Back to original color */
   }
 }
 
@@ -48,7 +60,7 @@ body {
   left: 50%; /* Center horizontally */
   width: 0; /* Start with no width */
   height: 0; /* Start with no height */
-  background-color: rgba(0, 100, 255, 0.5);
+  background-color: rgba(0, 167, 239, 0.652);
   transition: width 3s ease-in-out, height 3s ease-in-out;
   z-index: 2;
   pointer-events: none;
@@ -63,7 +75,7 @@ body {
   transform: translate(-50%, -50%);
   width: 300px;
   height: 200px;
-  background-color: #2e8b57;
+  background-color: #99ac83;
   border-radius: 100px;
   display: flex;
   justify-content: space-around;
