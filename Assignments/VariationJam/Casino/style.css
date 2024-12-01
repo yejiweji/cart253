@@ -30,6 +30,18 @@ body {
   cursor: pointer;
 }
 
+@keyframes flashRed {
+  0% {
+      background-color: rgba(0, 100, 255, 0.5); /* Default water color */
+  }
+  50% {
+      background-color: rgba(255, 0, 0, 0.5); /* Red flash */
+  }
+  100% {
+      background-color: rgba(0, 100, 255, 0.5); /* Back to original color */
+  }
+}
+
 #water-overlay {
   position: absolute;
   top: 44.5%; /* Center vertically */
@@ -43,19 +55,6 @@ body {
   transform: translate(-50%, -50%); /* Center the overlay */
   border-radius: 50%; /* Make it oval */
 }
-
-/* #drain {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  background-color: #333;
-  border-radius: 50%;
-  z-index: 3;
-  display: none;
-} */
 
 #emoji-container {
   position: absolute;
@@ -76,3 +75,4 @@ body {
   0% { transform: translateX(-50%) scale(1) rotate(0deg); }
   100% { transform: translateX(-50%) scale(0) rotate(360deg); }
 }
+
