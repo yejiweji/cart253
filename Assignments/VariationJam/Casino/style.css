@@ -1,90 +1,100 @@
-
+/* General Reset Styles */
 body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
+  margin: 0;           /* Remove default margin */
+  padding: 0;          /* Remove default padding */
+  height: 100%;        /* Ensure full height of the viewport */
+  overflow: hidden;    /* Prevent scrolling */
 }
 
+/* Body Styling */
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
-
-    background: repeating-linear-gradient(
-        180deg,
-        #288628aa,   /* Dark green */
-        #489e48a0 40px,
-        #9bc99b 10px,  /* Light green */
-        #a6e3a6 70px   /* Width of each stripe */
-    );
-    margin: 0;
-    padding: 0;
-    height: 100vh;  /* Full height of the viewport */
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
-
+  display: flex;                           /* Centering content */
+  justify-content: center;                 /* Horizontally center content */
+  align-items: center;                     /* Vertically center content */
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif; /* Set font family */
+  
+  /* Background: Repeating green gradient pattern */
+  background: repeating-linear-gradient(
+      180deg,                              /* Horizontal gradient direction */
+      #288628aa,                           
+      #489e48a0 40px,                      /* Lighter green with 40px intervals */
+      #9bc99b 10px,                     
+      #a6e3a6 70px                        
+  );
+  
+  margin: 0;                              /* Ensure no margin around the body */
+  padding: 0;                             /* Ensure no padding around the body */
+  height: 100vh;                          /* Full height of the viewport */
 }
 
+/* Container for the game elements */
 #game-container {
-  position: relative;
-  z-index: 1;
+  position: relative;                    
+  z-index: 1;                             /* Keeps the game container above other elements */
 }
 
+/* Styling for the Spin Button */
 #spin-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #409106;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  margin-top: 20px;                       /* Add space at the top of the button */
+  padding: 10px 20px;                     /* Add padding inside the button */
+  font-size: 18px;                        /* Set font size */
+  background-color: #409106;              /* Green background colour */
+  color: white;                           /* White text colour */
+  border: none;                           /* Remove border */
+  border-radius: 5px;                     /* Rounded corners */
+  cursor: pointer;                       /* Change cursor to pointer on hover */
 }
 
+/* Animation for water overlay flashing red (killing effect) */
 @keyframes flashRed {
   0% {
-      background-color: rgba(0, 167, 239, 0.652); /* Default water color */
+      background-color: rgba(0, 167, 239, 0.652); /* Default water colour */
   }
   50% {
-      background-color: rgba(202, 0, 0, 0.58); /* Red flash */
+      background-color: rgba(202, 0, 0, 0.58);   /* Red flash when overfed */
   }
   100% {
-      background-color: rgba(0, 167, 239, 0.652); /* Back to original color */
+      background-color: rgba(0, 167, 239, 0.652); /* Back to original colour */
   }
 }
 
+/* Water overlay (flooding effect) */
 #water-overlay {
-  position: absolute;
-  top: 44.5%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  width: 0; /* Start with no width */
-  height: 0; /* Start with no height */
-  background-color: rgba(0, 167, 239, 0.652);
-  transition: width 3s ease-in-out, height 3s ease-in-out;
-  z-index: 2;
-  pointer-events: none;
-  transform: translate(-50%, -50%); /* Center the overlay */
-  border-radius: 50%; /* Make it oval */
+  position: absolute;                      /* Position the overlay relative to its parent */
+  top: 44.5%;                              /* Center vertically (near middle of the screen) */
+  left: 50%;                               /* Center horizontally */
+  width: 0;                                /* Start with no width */
+  height: 0;                               /* Start with no height */
+  background-color: rgba(0, 167, 239, 0.652); /* Initial water colour */
+  transition: width 3s ease-in-out, height 3s ease-in-out; /* Animate width and height over 3 seconds */
+  z-index: 2;                              /* Ensure the water overlay is above other elements */
+  pointer-events: none;                    /* Disable interactions with the overlay */
+  transform: translate(-50%, -50%);         /* Center the overlay */
+  border-radius: 50%;                       /* Make the overlay circular (flooding effect) */
 }
 
+/* Emoji container for displaying symbols/icons */
 #emoji-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  height: 200px;
-  background-color: #99ac83;
-  border-radius: 100px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: -1;
+  position: absolute;                      /* Position the container relative to its parent */
+  top: 50%;                                /* Vertically center the container */
+  left: 50%;                               /* Horizontally center the container */
+  transform: translate(-50%, -50%);        /* Adjust the positioning to be exactly centered */
+  width: 300px;                           
+  height: 200px;                           
+  background-color: #99ac83;             
+  border-radius: 100px;                    /* Rounded corners */
+  display: flex;                           
+  justify-content: space-around;           /* Distribute items evenly within the container */
+  align-items: center;                     /* Center items vertically */
+  z-index: -1;                             /* Ensure emoji container is behind the main game elements */
 }
 
+/* Animation for the draining effect */
 @keyframes drain {
-  0% { transform: translateX(-50%) scale(1) rotate(0deg); }
-  100% { transform: translateX(-50%) scale(0) rotate(360deg); }
+  0% { 
+    transform: translateX(-50%) scale(1) rotate(0deg); /* Start at normal size, no rotation */
+  }
+  100% { 
+    transform: translateX(-50%) scale(0) rotate(360deg); /* Scale down and rotate */
+  }
 }
-
