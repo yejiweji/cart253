@@ -1,3 +1,4 @@
+
 body, html {
   margin: 0;
   padding: 0;
@@ -30,19 +31,21 @@ body {
 }
 
 #water-overlay {
-  position: absolute; /* Change to absolute */
-  top: 0; /* Start from the top of the container */
-  left: 0;
-  width: 100%; /* Fill the width of the container */
+  position: absolute;
+  top: 44.5%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  width: 0; /* Start with no width */
   height: 0; /* Start with no height */
   background-color: rgba(0, 100, 255, 0.5);
-  transition: height 3s ease-in-out;
+  transition: width 3s ease-in-out, height 3s ease-in-out;
   z-index: 2;
   pointer-events: none;
+  transform: translate(-50%, -50%); /* Center the overlay */
+  border-radius: 50%; /* Make it oval */
 }
 
-#drain {
-  position: absolute; /* Change to absolute */
+/* #drain {
+  position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
@@ -52,7 +55,7 @@ body {
   border-radius: 50%;
   z-index: 3;
   display: none;
-}
+} */
 
 #emoji-container {
   position: absolute;
@@ -61,12 +64,12 @@ body {
   transform: translate(-50%, -50%);
   width: 300px;
   height: 200px;
-  background-color: #2e8b57; /* Darker green */
-  border-radius: 100px; /* Oval shape */
+  background-color: #2e8b57;
+  border-radius: 100px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: -1; /* Set z-index to 0 to place it behind */
+  z-index: -1;
 }
 
 @keyframes drain {

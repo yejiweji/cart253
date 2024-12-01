@@ -1,5 +1,6 @@
+
 let reels = [];
-let symbols = ['🐟', '🐟', '🐟', '🐟', '🐟','🍇']; // More fish symbols
+let symbols = ['🐟', '🐟', '🐟', '🐟', '🐟','🍇'];
 let spinning = false;
 let spinButton;
 let isFlooding = false;
@@ -20,29 +21,25 @@ function setup() {
     waterOverlay = select('#water-overlay');
     drain = select('#drain');
 
-    // Create emoji container
     let emojiContainer = createDiv('').id('emoji-container');
     emojiContainer.parent('canvas-container');
 }
 
 function draw() {
-    background(178, 224, 178); // Light green for grass
+    background(178, 224, 178);
 
-    // Draw the oval container first
-    fill(46, 139, 87); // Darker green color
+    fill(46, 139, 87);
     noStroke();
-    ellipse(width / 2, height / 2, 280, 180); // Increase size to 250x150 (width x height)
+    ellipse(width / 2, height / 2, 280, 180);
 
-    // Draw slot machine reels
     textSize(50);
     textAlign(CENTER, CENTER);
-    fill(255); // Set text color to white
+    fill(255);
 
     for (let i = 0; i < 3; i++) {
         text(reels[i], width / 3 * i + width / 6, height / 2);
     }
 
-    // Spinning animation
     if (spinning && frameCount % 5 === 0) {
         for (let i = 0; i < 3; i++) {
             reels[i] = getRandomSymbol();
@@ -50,13 +47,10 @@ function draw() {
     }
 }
 
-
 function getRandomSymbol() {
-    // 60% chance to get a fish
     if (random() < 0.6) {
         return '🐟';
     } else {
-        // 40% chance to get other symbols
         return random(['🐟', '🐟', '🍇']);
     }
 }
@@ -85,14 +79,16 @@ function checkWin() {
 
 function startFlooding() {
     isFlooding = true;
-    waterOverlay.style('height', '100%');
+    waterOverlay.style('height', '180px'); // Set height to match the oval's height
+    waterOverlay.style('width', '280px'); // Set width to match the oval's width
     
     setTimeout(() => {
         drain.style('display', 'block');
-        drain.style('animation', 'drain 2s ease-in-out forwards');
+        drain.style('animation', 'drain 4s ease-in-out forwards');
         
         setTimeout(() => {
             waterOverlay.style('height', '0');
+            waterOverlay.style('width', '0'); // Reset width back to 0
             
             setTimeout(() => {
                 drain.style('display', 'none');
