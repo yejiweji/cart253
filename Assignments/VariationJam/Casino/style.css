@@ -1,0 +1,75 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #b2e0b2; /* Light green for grass */
+  font-family: Arial, sans-serif;
+}
+
+#game-container {
+  position: relative;
+  z-index: 1;
+}
+
+#spin-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#water-overlay {
+  position: absolute; /* Change to absolute */
+  top: 0; /* Start from the top of the container */
+  left: 0;
+  width: 100%; /* Fill the width of the container */
+  height: 0; /* Start with no height */
+  background-color: rgba(0, 100, 255, 0.5);
+  transition: height 3s ease-in-out;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#drain {
+  position: absolute; /* Change to absolute */
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: #333;
+  border-radius: 50%;
+  z-index: 3;
+  display: none;
+}
+
+#emoji-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 200px;
+  background-color: #2e8b57; /* Darker green */
+  border-radius: 100px; /* Oval shape */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: -1; /* Set z-index to 0 to place it behind */
+}
+
+@keyframes drain {
+  0% { transform: translateX(-50%) scale(1) rotate(0deg); }
+  100% { transform: translateX(-50%) scale(0) rotate(360deg); }
+}
