@@ -6,21 +6,15 @@ Yejin Oh 4229957
 
 ## Description
 
-This description should help the reader understand what the program is, what any controls do, and perhaps what the desired experience it.
+THE GAMBLING HOLE, is a take on the classic slots machine found at casinos, although you're not gambling with money in this game, you're gambling with chance and ~destiny~! Land on all fishes and they'll make themselves at home (a little too much) in the hole, land on dinosaurs and they'll try to escape off the island, land on zombies and they'll try to take over your slots. How far will you go to gamble?!
 
 ## Credits
-
-This bit should describe what tools were used. For example:
-
-This project uses [p5.js](https://p5js.org).
-https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js 
+This project uses [p5.js](https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js).
 
 ## Attribution
 
-This bit should attribute any assets or other elements used taken from other sources. For example:
-
-The fish images were sourced from the [Creative Commons image "Georgia Aquarium Fish"](https://search.creativecommons.org/photos/96f6f770-eac1-488c-8abb-16bee7bcc874) by Mike Johnston which is licensed with CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/.
-
 This project is in reference to Neal Fennimore's Caffeine Slot Machine in design: Copyright (c) 2024 by Neal Fennimore (https://codepen.io/nealfennimore/pen/VPgJbr)
+
+This project is in reference to Piotr Galore's Sunset CSS Slots - a game without JS/img/SVG/preprocessing or actual text: Copyright (c) 2024 by Piotr Galore (https://codepen.io/pgalor/pen/KRyjPr)
 
 This Project is using Pippin Barr's p5.js template and the original base file belongs to Pippin Barr.

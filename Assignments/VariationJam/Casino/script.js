@@ -1,5 +1,4 @@
 let reels = [];
-let symbols = ['🐟', '🐟', '🐟', '🐟', '🐟', '🍇'];  // List of possible symbols for the reels
 let spinning = false;  // Flag to track if the reels are spinning
 let spinButton;  
 let isFlooding = false;  // Flag to track if water flooding is active
@@ -32,9 +31,6 @@ function setup() {
 
 // Function to update the canvas on each frame
 function draw() {
-    // // Set the background to a light green color
-    // background(200); 
-
     // Draw a dark green oval in the center (representing the slot area)
     fill(99,148,44);
     noStroke();
@@ -59,13 +55,27 @@ function draw() {
     }
 }
 
+// Define the symbols and their probabilities
+const symbols = [
+    { emoji: '🐟', probability: 0.1 },
+    { emoji: '🦖', probability: 0.8 },
+    { emoji: '🍇', probability: 0.01 }
+];
+
 // Function to get a random symbol for the reels
 function getRandomSymbol() {
-    if (random() < 0.6) {
-        return '🐟';  // 60% chance to get fish
-    } else {
-        return random(['🐟', '🐟', '🍇']);  // higher chance to get fish
+    const randomValue = Math.random();
+    let cumulativeProbability = 0;
+
+    for (let symbol of symbols) {
+        cumulativeProbability += symbol.probability;
+        if (randomValue < cumulativeProbability) {
+            return symbol.emoji;
+        }
     }
+
+    // Fallback in case probabilities don't sum to 1
+    return symbols[symbols.length - 1].emoji;
 }
 
 // Function to handle the spin action
@@ -91,6 +101,9 @@ function checkWin() {
     if (reels[0] === '🐟' && reels[1] === '🐟' && reels[2] === '🐟') {
         startFlooding();  // If there is a win, start flooding the water
     }
+    else if (reels[0] === '🦖' && reels[1] === '🦖' && reels[2] === '🦖') {
+        startBackgroundFlooding(); // Trigger background flooding animation
+    }    
 }
 
 // Function to start flooding the water (trigger water animation)
@@ -104,6 +117,34 @@ function startFlooding() {
         alert("These stinkin' fishes won't let me play, guess I can kill them!?");  // Show alert after 3 seconds
     }, 3000); // Delay of 3000 milliseconds (3 seconds)
 }
+
+function startBackgroundFlooding() {
+    isFlooding = true; // Prevent other floods
+
+    // Create the flood overlay if it doesn't already exist
+    let backgroundFlood = select('#background-flood');
+    if (!backgroundFlood) {
+        backgroundFlood = createDiv('').id('background-flood');
+        backgroundFlood.parent(document.body);
+    }
+
+    // Reset initial state
+    backgroundFlood.style('height', '0');
+    backgroundFlood.style('display', 'block');
+
+    // Trigger the flooding animation
+    setTimeout(() => {
+        backgroundFlood.style('height', '100vh');
+    }, 50);
+
+    // Show alert after the animation finishes
+    setTimeout(() => {
+        alert("The dinosaurs took over! The background is flooding!");
+        isFlooding = false; // Allow future actions
+    }, 3050); // 3000ms for animation + 50ms initial delay
+}
+
+
 
 // Function to handle the mouse click event
 function mousePressed() {

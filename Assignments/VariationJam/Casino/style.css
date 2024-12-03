@@ -32,13 +32,27 @@ body {
   position: relative;                    
   z-index: 1;                             /* Keeps the game container above other elements */
 }
+
+/* CASINO Title */
+#title {
+  position: absolute;                     /* Position the title relative to the game container */
+  top: -115px;                              /* Position the title 10 pixels from the top */
+  left: 50%;                              /* Center the title horizontally */
+  transform: translateX(-50%);            /* Adjust the positioning to be exactly centered */
+  font-size: 60px;                        /* Font size */
+  color: #5b8e13dc;                     /* Text colour */
+  font-weight: bold;                      /* Bold text */
+  z-index: 4;                             /* Ensure the title is above other elements */
+  white-space: nowrap;                    /* Prevent text from wrapping to a new line */
+}
+
 /* Styling for the Spin Button */
 #spin-button {
   margin-top: 20px;                      /* Add space at the top of the button */
   padding: 12px 10px;                    /* Add padding inside the button */
   font-size: 11px;                       /* Set font size */
-  background: linear-gradient(145deg, #6f796a, #575c52); /* Create a rocky texture */
-  color: #494343;                        /* Light gray text color */
+  background: linear-gradient(145deg, #929d8d, #575c52); /* Create a rocky texture */
+  color: #494343;                        /* Light gray text colour */
   border: none;                          /* Remove border */
   border-radius: 15px;                   /* Smooth rounded corners for rock-like shape */
   box-shadow: inset 3px 3px 5px #4a5045, /* Inner shadow for depth */
@@ -89,6 +103,17 @@ body {
   border-radius: 50%;                       /* Make the overlay circular (flooding effect) */
 }
 
+#background-flood {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;                               /* Start invisible */
+  height: 0;                              /* Start invisible */
+  background-color: rgba(0, 167, 239, 0.652); /* Water-like background colour */
+  z-index: -1;                            /* Keep it behind all game elements */
+  transition: width 3s ease-in-out, height 3s ease-in-out; /* Smooth animation */
+}
+
 /* Emoji container for displaying symbols/icons */
 #emoji-container {
   position: absolute;                      /* Position the container relative to its parent */
@@ -103,6 +128,9 @@ body {
   justify-content: space-around;           /* Distribute items evenly within the container */
   align-items: center;                     /* Center items vertically */
   z-index: -1;                             /* Ensure emoji container is behind the main game elements */
+
+  box-shadow: inset 4px 2px 10px #1f4100dc, /* Inner shadow for depth */
+              2px 2px 30px rgba(152, 207, 101, 0.728); /* Outer highlight */
 }
 
 /* Animation for the draining effect */
