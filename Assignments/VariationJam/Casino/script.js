@@ -139,7 +139,7 @@ function startBackgroundFlooding() {
 
     // Show alert after the animation finishes
     setTimeout(() => {
-        alert("The dinosaurs took over! The background is flooding!");
+        alert("The dinosaurs are ESCAPING!! Better drag them back onto their island!");
         isFlooding = false; // Allow future actions
     }, 3050); // 3000ms for animation + 50ms initial delay
 }
