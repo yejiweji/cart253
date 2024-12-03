@@ -35,31 +35,31 @@ function draw() {
     fill(99,148,44);
     noStroke();
     ellipse(width / 2, height / 2, 330, 330);
-
     // Draw the symbols on the reels
     textSize(50);
     textAlign(CENTER, CENTER);
     fill(255);
-
     for (let i = 0; i < 3; i++) {
         let fishColor = (fishClicks[i] >= 3) ? color(255, 0, 0) : color(255);  // Change colour to red when fish is clicked 3 times
         fill(fishColor);
         text(reels[i], width / 3 * i + width / 6, height / 2);  // Position the fish symbols
     }
-
     // If spinning, update the reels every 5 frames
     if (spinning && frameCount % 5 === 0) {
         for (let i = 0; i < 3; i++) {
             reels[i] = getRandomSymbol();  // Randomly select new symbols
         }
     }
+    if (isZombieMode) {
+        drawZombies();
+    }    
 }
 
 // Define the symbols and their probabilities
 const symbols = [
-    { emoji: '🐟', probability: 0.1 },
+    { emoji: '🐟', probability: 0.8 },
     { emoji: '🦖', probability: 0.1 },
-    { emoji: '🍇', probability: 0.8 }
+    { emoji: '👩', probability: 0.1 },
 ];
 
 // Function to get a random symbol for the reels
@@ -94,6 +94,19 @@ function spin() {
             checkWin();  // Check if there is a winning combination
         }, 2000);
     }
+    if (!isFlooding && !isZombieMode) {
+        spinning = true;
+        spinButton.attribute('disabled', ''); // Disable spin button during spin
+
+        setTimeout(() => {
+            spinning = false;
+            spinButton.removeAttribute('disabled'); // Re-enable spin button
+            for (let i = 0; i < 3; i++) {
+                reels[i] = getRandomSymbol(); // Update reels
+            }
+            checkZombieOverrun(); // Check if the reels are overrun
+        }, 2000);
+    }
 }
 
 // Function to check if there is a winning combination (3 fish in a row)
@@ -104,6 +117,11 @@ function checkWin() {
     else if (reels[0] === '🦖' && reels[1] === '🦖' && reels[2] === '🦖') {
         startBackgroundFlooding(); // Trigger background flooding animation
     }    
+    else if (reels[0] === '👩' && reels[1] === '👩' && reels[2] === '👩') {
+        triggerRedFlash(); // Flash red when all humans appear
+        startZombieMode(); // Trigger zombie mode
+    }
+    
 }
 
 // Function to start flooding the water (trigger water animation)
@@ -131,6 +149,18 @@ function mousePressed() {
                 killFish(i);  // If the fish has been clicked 3 times, "kill" the fish
             }
         }
+    }
+        if (isZombieMode) {
+            for (let i = zombies.length - 1; i >= 0; i--) {
+                if (dist(mouseX, mouseY, zombies[i].x, zombies[i].y) < 20) {
+                    zombies.splice(i, 1); // Remove zombie on click
+                }
+            }
+            if (zombies.length === 0) {
+                resetZombieMode();
+            } else {
+                checkZombieOverrun(); // Check if reels are overrun after killing zombies
+            }
     }
 }
 
@@ -171,6 +201,8 @@ function triggerDrain() {
         alert("Would kill to play huh, interesting. Guess you can continue spinning now!");
     }, 5000);
 }
+
+//Dinosaur Mode
 
 let dinosaurs = [];  // Store dinosaur divs
 let moveInterval;  // Store the interval ID for movement
@@ -340,4 +372,105 @@ function resetGame() {
     for (let i = 0; i < 3; i++) {
         reels.push(getRandomSymbol());
     }
+}
+
+//Zombie mode
+let zombies = []; // Array to track zombie objects
+let isZombieMode = false; // Flag for zombie mode
+let zombieInterval; // Interval for spawning zombies
+
+function triggerRedFlash() {
+    let redFlash = select('#red-flash');
+    redFlash.style('display', 'block'); // Show the overlay
+    redFlash.style('animation', 'fadeOut 1s ease-in-out'); // Trigger fade-out animation
+
+    setTimeout(() => {
+        redFlash.style('display', 'none'); // Hide the overlay after animation
+        redFlash.style('animation', 'none'); // Reset animation for reuse
+    }, 800);
+}
+
+function startZombieMode() {
+    setTimeout(() => {
+        isZombieMode = true; // Activate zombie mode
+        alert("Zombies are attacking! Click to kill them before they infect your slots!");
+        spawnZombies(); // Call the function to spawn zombies
+    }, 1000); // Delay by 2000ms (2 seconds)
+}
+
+function spawnZombies() {
+    zombieInterval = setInterval(() => {
+        if (!isZombieMode) return;
+
+        let zombie = {
+            x: random(width),
+            y: random(height),
+            emoji: '🧟',
+            speed: random(1, 3)
+        };
+        zombies.push(zombie);
+        checkZombieOverrun(); // Continuously check during zombie spawns
+        }, 500); // Spawn a zombie every 500ms
+}
+
+function drawZombies() {
+    textSize(40);
+    for (let i = zombies.length - 1; i >= 0; i--) {
+        let zombie = zombies[i];
+        text(zombie.emoji, zombie.x, zombie.y);
+
+        // Move the zombie randomly
+        zombie.x += random(-zombie.speed, zombie.speed);
+        zombie.y += random(-zombie.speed, zombie.speed);
+
+        // Check if the zombie reaches the reels
+        if (dist(zombie.x, zombie.y, width / 2, height / 2) < 50) {
+            changeReelToZombie();
+            zombies.splice(i, 1);
+            checkZombieOverrun(); // Check if the reels are overrun
+        }
+    }
+}
+
+function changeReelToZombie() {
+    let randomReelIndex = floor(random(0, 3));
+    reels[randomReelIndex] = '🧟'; // Change the reel symbol to zombie
+    checkZombieOverrun();
+}
+
+function mousePressed() {
+    if (isZombieMode) {
+        for (let i = zombies.length - 1; i >= 0; i--) {
+            if (dist(mouseX, mouseY, zombies[i].x, zombies[i].y) < 20) {
+                zombies.splice(i, 1); // Remove zombie on click
+            }
+        }
+
+        if (zombies.length === 0) {
+            resetZombieMode();
+        }
+    }
+}
+
+function resetZombieMode() {
+    clearInterval(zombieInterval);
+    zombies = [];
+    isZombieMode = false;
+
+    alert("You killed all the zombies! Spin again!");
+}
+
+function checkZombieOverrun() {
+    // Check if all reels have zombies
+    if (reels.every(symbol => symbol === '🧟')) {
+        alert("You're not just overun by zombies, YOU ARE A ZOMBIE!! I'll say this in zombie so you can understand, z0mbi3z c@an'T gAmBL3!1!!1 y0u ar3 k1CkeD 0uT");
+        disableGame(); // Call a function to disable gameplay
+    }
+}
+
+function disableGame() {
+    spinButton.attribute('disabled', ''); // Disable the spin button
+    isZombieMode = false; // Stop zombie mode actions
+    noLoop(); // Stop the `draw` loop (if applicable)
+    console.log("Game disabled. Zombies have taken over.");
 }
