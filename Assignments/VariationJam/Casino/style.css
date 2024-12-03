@@ -74,20 +74,6 @@ body {
               2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-
-/* Animation for water overlay flashing red (killing effect) */
-@keyframes flashRed {
-  0% {
-      background-color: rgba(0, 167, 239, 0.652); /* Default water colour */
-  }
-  50% {
-      background-color: rgba(202, 0, 0, 0.58);   /* Red flash when overfed */
-  }
-  100% {
-      background-color: rgba(0, 167, 239, 0.652); /* Back to original colour */
-  }
-}
-
 /* Water overlay (flooding effect) */
 #water-overlay {
   position: absolute;                      /* Position the overlay relative to its parent */
@@ -97,10 +83,23 @@ body {
   height: 0;                               /* Start with no height */
   background-color: rgba(0, 167, 239, 0.652); /* Initial water colour */
   transition: width 3s ease-in-out, height 3s ease-in-out; /* Animate width and height over 3 seconds */
-  z-index: 2;                              /* Ensure the water overlay is above other elements */
+  z-index:1;                              /* Ensure the water overlay is above other elements */
   pointer-events: none;                    /* Disable interactions with the overlay */
   transform: translate(-50%, -50%);         /* Center the overlay */
   border-radius: 50%;                       /* Make the overlay circular (flooding effect) */
+}
+
+/* Animation for water overlay flashing red (killing effect) */
+@keyframes flashWater {
+  0% {
+      background-color: rgba(0, 167, 239, 0.652); /* Default water colour */
+  }
+  50% {
+      background-color: rgba(202, 0, 0, 0.58);   /* Red flash when overfed */
+  }
+  100% {
+      background-color: rgba(0, 167, 239, 0.652); /* Back to original colour */
+  }
 }
 
 #background-flood {
@@ -160,7 +159,7 @@ body {
   width: 100vw;
   height: 100vh;
   background-color: rgba(255, 0, 0, 0.8);
-  z-index: 999;
+  z-index: -1;
   display: none; /* Hidden by default */
   pointer-events: none; /* Prevent interaction */
 }

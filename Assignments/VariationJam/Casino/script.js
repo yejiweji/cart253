@@ -50,7 +50,7 @@ function draw() {
             reels[i] = getRandomSymbol();  // Randomly select new symbols
         }
     }
-    if (isZombieMode) {
+    else if (isZombieMode) {
         drawZombies();
     }    
 }
@@ -94,7 +94,7 @@ function spin() {
             checkWin();  // Check if there is a winning combination
         }, 2000);
     }
-    if (!isFlooding && !isZombieMode) {
+    else if (!isFlooding && !isZombieMode) {
         spinning = true;
         spinButton.attribute('disabled', ''); // Disable spin button during spin
 
@@ -127,8 +127,9 @@ function checkWin() {
 // Function to start flooding the water (trigger water animation)
 function startFlooding() {
     isFlooding = true;
-    waterOverlay.style('height', '370px');  // Set height of the water to match the oval's height
-    waterOverlay.style('width', '380px');  // Set width of the water to match the oval's width
+    waterOverlay.style('display', 'block');  // Ensure it's visible
+    waterOverlay.style('height', '370px');  // Expand to flood area
+    waterOverlay.style('width', '380px');
 
     // Delay the alert message for 3 seconds (3000 milliseconds)
     setTimeout(() => {
@@ -138,38 +139,49 @@ function startFlooding() {
 
 // Function to handle the mouse click event
 function mousePressed() {
-    for (let i = 0; i < 3; i++) {
-        // Check if the mouse is within the bounds of the fish (based on its position and size)
-        let fishX = width / 3 * i + width / 6;
-        let fishY = height / 2;
-        if (dist(mouseX, mouseY, fishX, fishY) < 50 && reels[i] === '🐟') {
-            fishClicks[i]++;  // Increment the click counter for the clicked fish
-            flashWater();  // Trigger water flash effect
-            if (fishClicks[i] >= 3) {
-                killFish(i);  // If the fish has been clicked 3 times, "kill" the fish
+    // Check if the water overlay was clicked
+    let waterX = waterOverlay.elt.offsetLeft;  // X position of the water overlay
+    let waterY = waterOverlay.elt.offsetTop;   // Y position of the water overlay
+    let waterWidth = waterOverlay.elt.offsetWidth;  // Width of the water overlay
+    let waterHeight = waterOverlay.elt.offsetHeight;  // Height of the water overlay
+
+    // Check if the mouse click is within the bounds of the water overlay
+    if (mouseX >= waterX && mouseX <= waterX + waterWidth && mouseY >= waterY && mouseY <= waterY + waterHeight) {
+        // If the water overlay is clicked, increment the fish click counters
+        for (let i = 0; i < 3; i++) {
+            if (reels[i] === '🐟') {  // Only count the click if it's a fish emoji
+                fishClicks[i]++;  // Increment the click counter for the clicked fish
+                flashWater();  // Trigger water flash effect
+                console.log(`Fish clicked: ${fishClicks[i]} times`);
+
+                if (fishClicks[i] >= 3) {
+                    killFish(i);  // If the fish has been clicked 3 times, "kill" the fish
+                }
             }
         }
     }
-        if (isZombieMode) {
-            for (let i = zombies.length - 1; i >= 0; i--) {
-                if (dist(mouseX, mouseY, zombies[i].x, zombies[i].y) < 20) {
-                    zombies.splice(i, 1); // Remove zombie on click
-                }
+
+    if (isZombieMode) {
+        for (let i = zombies.length - 1; i >= 0; i--) {
+            if (dist(mouseX, mouseY, zombies[i].x, zombies[i].y) < 20) {
+                zombies.splice(i, 1); // Remove zombie on click
             }
-            if (zombies.length === 0) {
-                resetZombieMode();
-            } else {
-                checkZombieOverrun(); // Check if reels are overrun after killing zombies
-            }
+        }
+        if (zombies.length === 0) {
+            resetZombieMode();
+        }
     }
 }
 
+
 // Function to trigger the red flash effect on the water when a fish is clicked
 function flashWater() {
-    waterOverlay.style('animation', 'flashRed 0.5s ease-in-out');  // Trigger the red flash effect
+    console.log("Flash Triggered");  // Log to verify the function is being called
+    waterOverlay.style('animation', 'flashRed 0.5s ease-in-out');  // Start the animation with the correct name
     setTimeout(() => {
-        waterOverlay.style('animation', 'none');  // Reset the animation after the flash
-    }, 500);
+        console.log("Animation Reset");  // Log to confirm reset happens
+        waterOverlay.style('animation', 'none');  // Reset the animation after 0.5s
+    }, 500); // Ensure the animation duration matches the keyframes duration
 }
 
 // Function to kill the fish (change it to a skull)
@@ -214,7 +226,7 @@ let offsetY = 0;  // To store the mouse offset for dragging
 function startBackgroundFlooding() {
     isFlooding = true; // Prevent other floods
 
-    // Create the flood overlay if it doesn't already exist
+    // Create the flood overlay
     let backgroundFlood = select('#background-flood');
     if (!backgroundFlood) {
         backgroundFlood = createDiv('').id('background-flood');
