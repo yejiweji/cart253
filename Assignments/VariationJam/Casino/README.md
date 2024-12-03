@@ -2,7 +2,7 @@
 
 Yejin Oh 4229957
 
-[View this project online](URL_FOR_THE_RUNNING_PROJECT)
+[View this project online](https://yejiweji.github.io/cart253/Assignments/VariationJam/Casino/)
 
 ## Description
 You stumble upon a strange field where you find a mysterious hole in the ground and a rock that shuffles the contents inside??!
