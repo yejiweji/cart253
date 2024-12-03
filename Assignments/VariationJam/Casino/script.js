@@ -32,13 +32,13 @@ function setup() {
 
 // Function to update the canvas on each frame
 function draw() {
-    // Set the background to a light green color
-    background(178, 224, 178); 
+    // // Set the background to a light green color
+    // background(200); 
 
     // Draw a dark green oval in the center (representing the slot area)
-    fill(46, 139, 87);
+    fill(99,148,44);
     noStroke();
-    ellipse(width / 2, height / 2, 280, 180);
+    ellipse(width / 2, height / 2, 330, 330);
 
     // Draw the symbols on the reels
     textSize(50);
@@ -96,8 +96,8 @@ function checkWin() {
 // Function to start flooding the water (trigger water animation)
 function startFlooding() {
     isFlooding = true;
-    waterOverlay.style('height', '180px');  // Set height of the water to match the oval's height
-    waterOverlay.style('width', '280px');  // Set width of the water to match the oval's width
+    waterOverlay.style('height', '370px');  // Set height of the water to match the oval's height
+    waterOverlay.style('width', '380px');  // Set width of the water to match the oval's width
 
     // Delay the alert message for 3 seconds (3000 milliseconds)
     setTimeout(() => {
@@ -135,11 +135,6 @@ function killFish(fishIndex) {
     if (fishClicks[0] >= 3 && fishClicks[1] >= 3 && fishClicks[2] >= 3) {
         triggerDrain();  // Trigger the drain action if all fish have been clicked 3 times
     }
-
-    // Delay the alert message
-    setTimeout(() => {
-        alert("Would kill to play huh, interesting. Guess you can continue spinning now!");  // Show alert after 5 seconds when all fish are killed
-    }, 7000);
 }
 
 // Function to trigger the drain animation (to empty the water)
@@ -157,4 +152,9 @@ function triggerDrain() {
             isFlooding = false;  // End the flooding state
         }, 2000);
     }, 2000);
+    
+    // Delay the alert message
+    setTimeout(() => {
+        alert("Would kill to play huh, interesting. Guess you can continue spinning now!");  // Show alert after 5 seconds when all fish are killed
+    }, 5000);
 }
