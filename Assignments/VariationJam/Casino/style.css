@@ -142,3 +142,13 @@ body {
     transform: translateX(-50%) scale(0) rotate(360deg); /* Scale down and rotate */
   }
 }
+
+.dinosaur {
+    transition: top 0.5s ease-in-out, left 0.5s ease-in-out;  /* Smooth transition for the dinosaur movements */
+}
+
+.permanently-frozen {
+  pointer-events: none; /* Disable interaction */
+  position: absolute;   /* Lock position */
+  opacity: 1;           /* Ensure full visibility */
+}

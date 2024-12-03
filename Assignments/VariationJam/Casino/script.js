@@ -58,8 +58,8 @@ function draw() {
 // Define the symbols and their probabilities
 const symbols = [
     { emoji: '🐟', probability: 0.1 },
-    { emoji: '🦖', probability: 0.8 },
-    { emoji: '🍇', probability: 0.01 }
+    { emoji: '🦖', probability: 0.1 },
+    { emoji: '🍇', probability: 0.8 }
 ];
 
 // Function to get a random symbol for the reels
@@ -118,34 +118,6 @@ function startFlooding() {
     }, 3000); // Delay of 3000 milliseconds (3 seconds)
 }
 
-function startBackgroundFlooding() {
-    isFlooding = true; // Prevent other floods
-
-    // Create the flood overlay if it doesn't already exist
-    let backgroundFlood = select('#background-flood');
-    if (!backgroundFlood) {
-        backgroundFlood = createDiv('').id('background-flood');
-        backgroundFlood.parent(document.body);
-    }
-
-    // Reset initial state
-    backgroundFlood.style('height', '0');
-    backgroundFlood.style('display', 'block');
-
-    // Trigger the flooding animation
-    setTimeout(() => {
-        backgroundFlood.style('height', '100vh');
-    }, 50);
-
-    // Show alert after the animation finishes
-    setTimeout(() => {
-        alert("The dinosaurs are ESCAPING!! Better drag them back onto their island!");
-        isFlooding = false; // Allow future actions
-    }, 3050); // 3000ms for animation + 50ms initial delay
-}
-
-
-
 // Function to handle the mouse click event
 function mousePressed() {
     for (let i = 0; i < 3; i++) {
@@ -178,24 +150,194 @@ function killFish(fishIndex) {
     }
 }
 
-// Function to trigger the drain animation (to empty the water)
+// Function to trigger the drain animation
 function triggerDrain() {
-    drain.style('display', 'block');  // Make the drain visible
-    drain.style('animation', 'drain 2s ease-in-out forwards');  // Trigger the drain animation
+    drain.style('animation', 'drain 2s ease-in-out forwards'); // Start drain animation
 
     setTimeout(() => {
-        waterOverlay.style('height', '0');  // Set water height to 0 to simulate draining
-        waterOverlay.style('width', '0');  // Set water width to 0 to simulate draining
+        waterOverlay.style('height', '0'); // Shrink water height
+        waterOverlay.style('width', '0'); // Shrink water width
+        waterOverlay.style('display', 'none'); // Hide water overlay
         
         setTimeout(() => {
-            drain.style('display', 'none');  // Hide the drain after the animation
-            drain.style('animation', 'none');  // Reset the drain animation
-            isFlooding = false;  // End the flooding state
+            drain.style('display', 'none'); // Hide the drain
+            drain.style('animation', 'none'); // Reset drain animation state
+            isFlooding = false; // Allow future flooding events
         }, 2000);
     }, 2000);
-    
-    // Delay the alert message
+
+    // Final alert once drain completes
     setTimeout(() => {
-        alert("Would kill to play huh, interesting. Guess you can continue spinning now!");  // Show alert after 5 seconds when all fish are killed
+        alert("Would kill to play huh, interesting. Guess you can continue spinning now!");
     }, 5000);
+}
+
+let dinosaurs = [];  // Store dinosaur divs
+let moveInterval;  // Store the interval ID for movement
+let dinosaurBeingDragged = null;  // To track which dinosaur is being dragged
+let offsetX = 0;  // To store the mouse offset for dragging
+let offsetY = 0;  // To store the mouse offset for dragging
+
+
+function startBackgroundFlooding() {
+    isFlooding = true; // Prevent other floods
+
+    // Create the flood overlay if it doesn't already exist
+    let backgroundFlood = select('#background-flood');
+    if (!backgroundFlood) {
+        backgroundFlood = createDiv('').id('background-flood');
+        backgroundFlood.parent(document.body);
+    }
+
+    // Reset initial state
+    backgroundFlood.style('height', '0');
+    backgroundFlood.style('display', 'block');
+
+    // Trigger the flooding animation
+    setTimeout(() => {
+        backgroundFlood.style('height', '100vh');
+    }, 50);
+
+    // Show alert after the animation finishes
+    setTimeout(() => {
+        alert("The dinosaurs are ESCAPING!! Better drag them back onto their island!");
+        
+        // After the alert, start the floating animation
+        startDinosaurEscape();
+        
+        isFlooding = false; // Allow future actions
+    }, 3050); // 3000ms for animation + 50ms initial delay
+}
+
+function startDinosaurEscape() {
+    // Create dinosaur elements and append them to the body
+    for (let i = 0; i < 3; i++) {
+        let dinosaur = createDiv('🦖');
+        dinosaur.style('position', 'absolute');
+        dinosaur.style('font-size', '80px');
+        dinosaur.style('top', random(0, height) + 'px');
+        dinosaur.style('left', random(0, width) + 'px');
+        dinosaurs.push(dinosaur);
+        
+        // Add mousePressed event to handle the drag start
+        dinosaur.mousePressed(startDrag);
+        
+        // Add mouseReleased event to handle the drop
+        dinosaur.mouseReleased(stopDrag);
+    }
+
+    // Start moving the dinosaurs at regular intervals
+    moveInterval = setInterval(moveDinosaurs, 800); //Bigger the number slower they move
+}
+
+// Function to move the dinosaurs randomly
+function moveDinosaurs() {
+    dinosaurs.forEach(dinosaur => {
+        if (!dinosaur.hasClass('frozen')) { 
+            // Skip moving if the dinosaur is frozen
+            let newX = random(0, width);
+            let newY = random(0, height);
+            dinosaur.style('top', newY + 'px');
+            dinosaur.style('left', newX + 'px');
+        }
+    });
+}
+
+// Function to handle when a dinosaur starts being dragged
+function startDrag() {
+    dinosaurBeingDragged = this;  // Set the dinosaur that is being dragged
+    offsetX = mouseX - parseFloat(dinosaurBeingDragged.style('left'));  // Calculate the offset for dragging
+    offsetY = mouseY - parseFloat(dinosaurBeingDragged.style('top'));  // Calculate the offset for dragging
+    dinosaurBeingDragged.style('z-index', '100');  // Bring the dinosaur to the front while dragging
+    cursor(grab);
+}
+
+// Function to handle the dragging motion
+function mouseDragged() {
+    if (dinosaurBeingDragged) {
+        let newX = mouseX - offsetX;  // Calculate new X position based on mouse position and offset
+        let newY = mouseY - offsetY;  // Calculate new Y position based on mouse position and offset
+        dinosaurBeingDragged.style('left', newX + 'px');  // Update the dinosaur's X position
+        dinosaurBeingDragged.style('top', newY + 'px');   // Update the dinosaur's Y position
+    }
+}
+
+// Function to stop the dragging and check if the dinosaur is dropped on the island
+let frozenDinosaurs = 0;  // Counter to track how many dinosaurs are frozen in the oval
+
+// Function to stop dragging and check if the dinosaur is dropped on the island
+function stopDrag() {
+    if (dinosaurBeingDragged) {
+        // Island (oval) center and dimensions
+        let islandX = width;
+        let islandY = height;
+        let islandRadius = 300; // Adjusted for circular distance detection
+
+        // Get dinosaur's current center position
+        let dinoX = mouseX;
+        let dinoY = mouseY;
+
+        // Check if the dinosaur is inside the oval area
+        let distance = dist(dinoX, dinoY, islandX, islandY);
+        if (distance < islandRadius) {
+                 // Successfully placed on the island
+             dinosaurBeingDragged.style('left', `${islandX - 40}px`); // Center the dinosaur
+             dinosaurBeingDragged.style('top', `${islandY - 40}px`);
+             dinosaurBeingDragged.style('z-index', '1');
+             dinosaurBeingDragged.addClass('permanently-frozen'); // Add frozen class to prevent dragging
+        
+             frozenDinosaurs++;
+    
+             console.log(`Frozen dinosaurs: ${frozenDinosaurs}`); // Debug logrozenDinosaurs++; // Increment the counter
+        
+            if (frozenDinosaurs === 3) {
+                setTimeout(() => {
+                    alert("All dinosaurs have been returned to the island! Nothing can stop me from spinning now!");
+                    triggerbackgrounddrain(); // Trigger the drain
+                    resetGame(); // Reset game state
+                }, 1000);
+            } 
+        }
+     }
+        dinosaurBeingDragged = null; // Clear dragging state
+    }
+
+function triggerbackgrounddrain() {
+    console.log("Draining background triggered"); // Debugging log
+
+    // Select the background flood overlay
+    let backgroundFlood = select('#background-flood');
+    if (!backgroundFlood) {
+        console.error("Background flood element not found!"); // Error log if not present
+        return;
+    }
+
+    // Trigger the drain animation
+    backgroundFlood.style('animation', 'drain 2s ease-in-out forwards');
+
+    setTimeout(() => {
+        backgroundFlood.style('height', '0'); // Shrink height to simulate draining
+        backgroundFlood.style('width', '0'); // Shrink width to simulate draining
+        backgroundFlood.style('display', 'none'); // Hide the element after animation
+
+        setTimeout(() => {
+            backgroundFlood.style('animation', 'none'); // Reset animation for reuse
+            isFlooding = false; // Allow future flooding events
+            console.log("Background flooding successfully drained"); // Confirmation log
+        }, 2000); // Allow the reset after the animation completes
+    }, 2000); // Start shrinking after the drain animation
+}
+
+
+
+// Function to reset the game state after all dinosaurs are frozen and the water drains
+function resetGame() {
+    console.log("Game reset triggered");
+    dinosaurs.forEach(dino => dino.remove());
+    dinosaurs = [];
+    frozenDinosaurs = 0;
+    reels = [];
+    for (let i = 0; i < 3; i++) {
+        reels.push(getRandomSymbol());
+    }
 }
