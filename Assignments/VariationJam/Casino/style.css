@@ -81,10 +81,10 @@ body {
   left: 50%;                               /* Center horizontally */
   width: 0;                                /* Start with no width */
   height: 0;                               /* Start with no height */
-  background-color: rgba(0, 167, 239, 0.652); /* Initial water colour */
+  background-color: rgba(0, 167, 239, 0.652); /* Initial water color */
   transition: width 3s ease-in-out, height 3s ease-in-out; /* Animate width and height over 3 seconds */
-  z-index:1;                              /* Ensure the water overlay is above other elements */
-  pointer-events: none;                    /* Disable interactions with the overlay */
+  z-index: 1;                              /* Ensure the water overlay is above other elements */
+  pointer-events: auto;                    /* Enable pointer events for interaction */
   transform: translate(-50%, -50%);         /* Center the overlay */
   border-radius: 50%;                       /* Make the overlay circular (flooding effect) */
 }
@@ -92,14 +92,16 @@ body {
 /* Animation for water overlay flashing red (killing effect) */
 @keyframes flashWater {
   0% {
-      background-color: rgba(0, 167, 239, 0.652); /* Default water colour */
-  }
-  50% {
-      background-color: rgba(202, 0, 0, 0.58);   /* Red flash when overfed */
+    background-color: rgba(202, 0, 0, 0.58); /* Red flash when overfed */
   }
   100% {
-      background-color: rgba(0, 167, 239, 0.652); /* Back to original colour */
+    background-color: rgba(0, 167, 239, 0.652); /* Back to original color */
   }
+}
+
+#drain {
+  display: block;  /* Ensure it's visible */
+  /* initial styles for drain */
 }
 
 #background-flood {

@@ -57,9 +57,9 @@ function draw() {
 
 // Define the symbols and their probabilities
 const symbols = [
-    { emoji: '🐟', probability: 0.8 },
-    { emoji: '🦖', probability: 0.1 },
-    { emoji: '👩', probability: 0.1 },
+    { emoji: '🐟', probability: 0.2},
+    { emoji: '🦖', probability: 0.2 },
+    { emoji: '👩', probability: 0.2 },
 ];
 
 // Function to get a random symbol for the reels
@@ -139,16 +139,31 @@ function startFlooding() {
 
 // Function to handle the mouse click event
 function mousePressed() {
-    // Check if the water overlay was clicked
+    console.log("mousepressed");
+
+    // Get the position of the water overlay
     let waterX = waterOverlay.elt.offsetLeft;  // X position of the water overlay
     let waterY = waterOverlay.elt.offsetTop;   // Y position of the water overlay
     let waterWidth = waterOverlay.elt.offsetWidth;  // Width of the water overlay
     let waterHeight = waterOverlay.elt.offsetHeight;  // Height of the water overlay
 
+    // Log the positions for debugging
+    console.log(`Water Overlay Position: (${waterX}, ${waterY}), Size: (${waterWidth} x ${waterHeight})`);
+    console.log(`Mouse Position: (${mouseX}, ${mouseY})`);
+
     // Check if the mouse click is within the bounds of the water overlay
     if (mouseX >= waterX && mouseX <= waterX + waterWidth && mouseY >= waterY && mouseY <= waterY + waterHeight) {
-        // If the water overlay is clicked, increment the fish click counters
-        for (let i = 0; i < 3; i++) {
+        console.log("Water overlay clicked!");
+    }
+
+    // Now check for clicks on the fish, even if the water overlay is present
+    for (let i = 0; i < 3; i++) {
+        let fishX = width / 3 * i + width / 6;  // X position of the fish symbol
+        let fishY = height / 2;  // Y position of the fish symbol
+        let fishSize = 50;  // Approximate size of the fish symbol (adjust if needed)
+
+        // Check if the mouse is within the bounds of the fish
+        if (dist(mouseX, mouseY, fishX, fishY) < fishSize) {
             if (reels[i] === '🐟') {  // Only count the click if it's a fish emoji
                 fishClicks[i]++;  // Increment the click counter for the clicked fish
                 flashWater();  // Trigger water flash effect
@@ -161,6 +176,7 @@ function mousePressed() {
         }
     }
 
+    // Handle zombie mode clicks
     if (isZombieMode) {
         for (let i = zombies.length - 1; i >= 0; i--) {
             if (dist(mouseX, mouseY, zombies[i].x, zombies[i].y) < 20) {
@@ -173,16 +189,20 @@ function mousePressed() {
     }
 }
 
-
 // Function to trigger the red flash effect on the water when a fish is clicked
 function flashWater() {
     console.log("Flash Triggered");  // Log to verify the function is being called
-    waterOverlay.style('animation', 'flashRed 0.5s ease-in-out');  // Start the animation with the correct name
+    
+    // Apply the flashWater animation to the water overlay
+    waterOverlay.style('animation', 'flashWater 0.5s ease-in-out');  
+    
+    // Reset the animation after 0.5s to allow it to trigger again on the next click
     setTimeout(() => {
         console.log("Animation Reset");  // Log to confirm reset happens
         waterOverlay.style('animation', 'none');  // Reset the animation after 0.5s
-    }, 500); // Ensure the animation duration matches the keyframes duration
+    }, 1000); 
 }
+
 
 // Function to kill the fish (change it to a skull)
 function killFish(fishIndex) {
@@ -192,26 +212,34 @@ function killFish(fishIndex) {
     }
 }
 
-// Function to trigger the drain animation
 function triggerDrain() {
-    drain.style('animation', 'drain 2s ease-in-out forwards'); // Start drain animation
+    console.log("Starting drain animation...");
 
-    setTimeout(() => {
-        waterOverlay.style('height', '0'); // Shrink water height
-        waterOverlay.style('width', '0'); // Shrink water width
-        waterOverlay.style('display', 'none'); // Hide water overlay
-        
-        setTimeout(() => {
-            drain.style('display', 'none'); // Hide the drain
-            drain.style('animation', 'none'); // Reset drain animation state
-            isFlooding = false; // Allow future flooding events
-        }, 2000);
-    }, 2000);
+    // Start the drain animation on the water overlay
+    waterOverlay.style('animation', 'drain 2s ease-in-out forwards');
 
-    // Final alert once drain completes
+    // After the animation completes (2 seconds), hide the water overlay and reset it
     setTimeout(() => {
+        console.log("Drain animation complete, resetting water overlay...");
+
+        waterOverlay.style('display', 'none'); // Hide water overlay after draining
+        waterOverlay.style('animation', 'none'); // Reset animation for future use
+        drain.style('display', 'none'); // Hide the drain after the animation
+
+        // Reset the flooding state
+        isFlooding = false;  // Allow spinning to start again
+        spinning = false;    // Ensure spinning flag is reset
+
+        // Re-enable the spin button
+        console.log("Re-enabling spin button...");
+        spinButton.removeAttribute('disabled');  // Re-enable the spin button
+    }, 2300);  // Timing to match the duration of the drain animation
+
+    // Show final alert after the draining process is complete
+    setTimeout(() => {
+        console.log("Alerting the user...");
         alert("Would kill to play huh, interesting. Guess you can continue spinning now!");
-    }, 5000);
+    }, 2300);  // Alert after the drain animation
 }
 
 //Dinosaur Mode
@@ -448,20 +476,6 @@ function changeReelToZombie() {
     let randomReelIndex = floor(random(0, 3));
     reels[randomReelIndex] = '🧟'; // Change the reel symbol to zombie
     checkZombieOverrun();
-}
-
-function mousePressed() {
-    if (isZombieMode) {
-        for (let i = zombies.length - 1; i >= 0; i--) {
-            if (dist(mouseX, mouseY, zombies[i].x, zombies[i].y) < 20) {
-                zombies.splice(i, 1); // Remove zombie on click
-            }
-        }
-
-        if (zombies.length === 0) {
-            resetZombieMode();
-        }
-    }
 }
 
 function resetZombieMode() {
